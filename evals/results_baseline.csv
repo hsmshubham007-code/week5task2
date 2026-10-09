@@ -1,0 +1,132 @@
+﻿id,question,passed,failure_category,expected_columns,expected_rows,actual_columns,actual_rows,generated_sql,sql_errors,agent_answer,exception
+Q001,How many customers are in the database?,True,pass,"[""customer_count""]",[[59]],"[""customer_count""]",[[59]],"[""SELECT COUNT(*) AS customer_count FROM Customers;"", ""SELECT COUNT(*) AS customer_count FROM Customer;""]","[""no such table: Customers""]","There are **59 customers** in the database.
+
+**SQL used**
+
+```sql
+SELECT COUNT(*) AS customer_count
+FROM Customer;
+```
+
+This query counts all rows in the `Customer` table, which represents each customer record.",
+Q002,How many employees are there?,False,agent_exception,"[""employee_count""]",[[8]],[],null,[],[],,"RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 7337, Requested 674. Please try again in 82.499999ms. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+Q003,How many music tracks are available?,True,pass,"[""track_count""]",[[3503]],"[""track_count""]",[[3503]],"[""SELECT COUNT(*) AS track_count FROM Track;""]",[],"There are **3,503** music tracks in the database.
+
+**SQL used**
+
+```sql
+SELECT COUNT(*) AS track_count
+FROM Track;
+```",
+Q004,How many artists are represented?,False,agent_exception,"[""artist_count""]",[[275]],[],null,[],[],,"RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 7434, Requested 663. Please try again in 727.5ms. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+Q005,How many albums are in the catalog?,True,pass,"[""album_count""]",[[347]],"[""album_count""]",[[347]],"[""SELECT COUNT(*) AS album_count FROM Album;""]",[],"There are **347 albums** in the catalog.
+
+**SQL used**
+
+```sql
+SELECT COUNT(*) AS album_count
+FROM Album;
+```",
+Q006,How many invoices have been recorded?,True,pass,"[""invoice_count""]",[[412]],"[""invoice_count""]",[[412]],"[""SELECT COUNT(*) AS invoice_count FROM Invoice;""]",[],"There are **412 invoices** recorded in the database.
+
+**SQL used**
+
+```sql
+SELECT COUNT(*) AS invoice_count
+FROM Invoice;
+```",
+Q007,Which five countries have the most customers?,False,column_mismatch,"[""Country"", ""customers""]","[[""USA"", 13], [""Canada"", 8], [""Brazil"", 5], [""France"", 5], [""Germany"", 4]]","[""Country"", ""customer_count""]","[[""USA"", 13], [""Canada"", 8], [""France"", 5], [""Brazil"", 5], [""Germany"", 4]]","[""SELECT Country, COUNT(*) AS customer_count FROM Customer GROUP BY Country ORDER BY customer_count DESC LIMIT 5;""]",[],"The five countries with the most customers are:
+
+| Country | Number of customers |
+|---------|---------------------|
+| USA     | 13 |
+| Canada  | 8 |
+| France  | 5 |
+| Brazil  | 5 |
+| Germany | 4 |
+
+**SQL used**
+
+```sql
+SELECT Country, COUNT(*) AS customer_count
+FROM Customer
+GROUP BY Country
+ORDER BY customer_count DESC
+LIMIT 5;
+```",
+Q008,How many customers live in Canada?,False,column_mismatch,"[""customers""]",[[8]],"[""num_canadian_customers""]",[[8]],"[""SELECT COUNT(*) AS num_canadian_customers FROM Customer WHERE Country = 'Canada';""]",[],"There are **8 customers** who live in Canada.
+
+**SQL used**
+
+```sql
+SELECT COUNT(*) AS num_canadian_customers
+FROM Customer
+WHERE Country = 'Canada';
+```",
+Q009,Show ten customers and their assigned support representatives.,False,no_sql_generated,"[""FirstName"", ""LastName"", ""rep_first_name"", ""rep_last_name""]","[[""Luís"", ""Gonçalves"", ""Jane"", ""Peacock""], [""Leonie"", ""Köhler"", ""Steve"", ""Johnson""], [""François"", ""Tremblay"", ""Jane"", ""Peacock""], [""Bjørn"", ""Hansen"", ""Margaret"", ""Park""], [""František"", ""Wichterlová"", ""Margaret"", ""Park""], [""Helena"", ""Holý"", ""Steve"", ""Johnson""], [""Astrid"", ""Gruber"", ""Steve"", ""Johnson""], [""Daan"", ""Peeters"", ""Margaret"", ""Park""], [""Kara"", ""Nielsen"", ""Margaret"", ""Park""], [""Eduardo"", ""Martins"", ""Margaret"", ""Park""]]",[],null,[],[],"I’m sorry, but the Chinook database does not contain any information about support representatives or a relationship between customers and support staff. The available tables are:
+
+- `Albums`, `Artists`, `Customers`, `Employees`, `Invoices`, `InvoiceLines`, `MediaTypes`, `Playlist`, `PlaylistTrack`, `Tracks`
+
+None of these tables link a customer to a support representative. Therefore, I can’t provide the requested list.",
+Q010,Which five customers have the most invoices?,False,agent_exception,"[""CustomerId"", ""FirstName"", ""LastName"", ""invoice_count""]","[[1, ""Luís"", ""Gonçalves"", 7], [2, ""Leonie"", ""Köhler"", 7], [3, ""François"", ""Tremblay"", 7], [4, ""Bjørn"", ""Hansen"", 7], [5, ""František"", ""Wichterlová"", 7]]",[],null,[],[],,"RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 4528, Requested 3678. Please try again in 1.545s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+Q011,Which five customers have spent the most money?,False,column_mismatch,"[""CustomerId"", ""FirstName"", ""LastName"", ""total_spent""]","[[6, ""Helena"", ""Holý"", 49.62], [26, ""Richard"", ""Cunningham"", 47.62], [57, ""Luis"", ""Rojas"", 46.62], [45, ""Ladislav"", ""Kovács"", 45.62], [46, ""Hugh"", ""O'Reilly"", 45.62]]","[""CustomerId"", ""FirstName"", ""LastName"", ""TotalSpent""]","[[6, ""Helena"", ""Holý"", 49.62], [26, ""Richard"", ""Cunningham"", 47.62], [57, ""Luis"", ""Rojas"", 46.62], [45, ""Ladislav"", ""Kovács"", 45.62], [46, ""Hugh"", ""O'Reilly"", 45.62]]","[""SELECT c.CustomerId, c.FirstName, c.LastName, SUM(i.Total) AS TotalSpent\nFROM Customer c\nJOIN Invoice i ON c.CustomerId = i.CustomerId\nGROUP BY c.CustomerId, c.FirstName, c.LastName\nORDER BY TotalSpent DESC\nLIMIT 5;""]",[],"The five customers who have spent the most money are:
+
+| CustomerId | FirstName | LastName | Total Spent |
+|------------|-----------|----------|-------------|
+| 6 | Helena | Holý | $49.62 |
+| 26 | Richard | Cunningham | $47.62 |
+| 57 | Luis | Rojas | $46.62 |
+| 45 | Ladislav | Kovács | $45.62 |
+| 46 | Hugh | O'Reilly | $45.62 |
+
+**SQL used**
+
+```sql
+SELECT c.CustomerId,
+       c.FirstName,
+       c.LastName,
+       SUM(i.Total) AS TotalSpent
+FROM Customer c
+JOIN Invoice i ON c.CustomerId = i.CustomerId
+GROUP BY c.CustomerId, c.FirstName, c.LastName
+ORDER BY TotalSpent DESC
+LIMIT 5;
+```",
+Q012,Which five billing countries generate the most revenue?,False,column_mismatch,"[""BillingCountry"", ""revenue""]","[[""USA"", 523.06], [""Canada"", 303.96], [""France"", 195.1], [""Brazil"", 190.1], [""Germany"", 156.48]]","[""BillingCountry"", ""TotalRevenue""]","[[""USA"", 523.06], [""Canada"", 303.96], [""France"", 195.1], [""Brazil"", 190.1], [""Germany"", 156.48]]","[""SELECT BillingCountry, SUM(InvoiceTotal) AS TotalRevenue FROM Invoice GROUP BY BillingCountry ORDER BY TotalRevenue DESC LIMIT 5;"", ""SELECT BillingCountry, SUM(Total) AS TotalRevenue FROM Invoice GROUP BY BillingCountry ORDER BY TotalRevenue DESC LIMIT 5;""]","[""no such column: InvoiceTotal""]","The five billing countries that generate the most revenue are:
+
+| Billing Country | Total Revenue |
+|-----------------|---------------|
+| USA             | 523.06 |
+| Canada          | 303.96 |
+| France          | 195.10 |
+| Brazil          | 190.10 |
+| Germany         | 156.48 |
+
+**SQL used**
+
+```sql
+SELECT BillingCountry,
+       SUM(Total) AS TotalRevenue
+FROM Invoice
+GROUP BY BillingCountry
+ORDER BY TotalRevenue DESC
+LIMIT 5;
+```",
+Q013,What is the total revenue from all invoices?,False,agent_exception,"[""total_revenue""]",[[2328.6]],[],null,[],[],,"RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199580, Requested 569. Please try again in 1m4.367999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+Q014,What is the average invoice amount?,False,agent_exception,"[""average_invoice""]",[[5.65]],[],null,[],[],,"RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199578, Requested 716. Please try again in 2m7.008s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+Q015,"What is the monthly revenue, ordered from earliest to latest month?",False,agent_exception,"[""month"", ""revenue""]","[[""2009-01"", 35.64], [""2009-02"", 37.62], [""2009-03"", 37.62], [""2009-04"", 37.62], [""2009-05"", 37.62], [""2009-06"", 37.62], [""2009-07"", 37.62], [""2009-08"", 37.62], [""2009-09"", 37.62], [""2009-10"", 37.62], [""2009-11"", 37.62], [""2009-12"", 37.62], [""2010-01"", 52.62], [""2010-02"", 46.62], [""2010-03"", 44.62], [""2010-04"", 37.62], [""2010-05"", 37.62], [""2010-06"", 37.62], [""2010-07"", 37.62], [""2010-08"", 37.62], [""2010-09"", 36.63], [""2010-10"", 37.62], [""2010-11"", 37.62], [""2010-12"", 37.62], [""2011-01"", 37.62], [""2011-02"", 37.62], [""2011-03"", 37.62], [""2011-04"", 51.62], [""2011-05"", 42.62], [""2011-06"", 50.62], [""2011-07"", 37.62], [""2011-08"", 37.62], [""2011-09"", 37.62], [""2011-10"", 37.62], [""2011-11"", 23.76], [""2011-12"", 37.62], [""2012-01"", 37.62], [""2012-02"", 37.62], [""2012-03"", 37.62], [""2012-04"", 37.62], [""2012-05"", 37.62], [""2012-06"", 37.62], [""2012-07"", 39.62], [""2012-08"", 47.62], [""2012-09"", 46.71], [""2012-10"", 42.62], [""2012-11"", 37.62], [""2012-12"", 37.62], [""2013-01"", 37.62], [""2013-02"", 27.72], [""2013-03"", 37.62], [""2013-04"", 33.66], [""2013-05"", 37.62], [""2013-06"", 37.62], [""2013-07"", 37.62], [""2013-08"", 37.62], [""2013-09"", 37.62], [""2013-10"", 37.62], [""2013-11"", 49.62], [""2013-12"", 38.62]]",[],null,[],[],,"RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199575, Requested 699. Please try again in 1m58.368s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+Q016,Which five genres contain the most tracks?,False,agent_exception,"[""genre"", ""track_count""]","[[""Rock"", 1297], [""Latin"", 579], [""Metal"", 374], [""Alternative & Punk"", 332], [""Jazz"", 130]]",[],null,[],[],,"RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199573, Requested 694. Please try again in 1m55.344s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+Q017,Which five albums have the most tracks?,False,agent_exception,"[""Title"", ""track_count""]","[[""Greatest Hits"", 57], [""Minha Historia"", 34], [""Unplugged"", 30], [""Lost, Season 3"", 26], [""Lost, Season 1"", 25]]",[],null,[],[],,"RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199571, Requested 717. Please try again in 2m4.416s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+Q018,Which five artists have released the most albums?,False,agent_exception,"[""Name"", ""album_count""]","[[""Iron Maiden"", 21], [""Led Zeppelin"", 14], [""Deep Purple"", 11], [""Metallica"", 10], [""U2"", 10]]",[],null,[],[],,"RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199568, Requested 695. Please try again in 1m53.616s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+Q019,Which five playlists contain the most tracks?,False,agent_exception,"[""Name"", ""track_count""]","[[""Music"", 3290], [""Music"", 3290], [""90’s Music"", 1477], [""TV Shows"", 213], [""TV Shows"", 213]]",[],null,[],[],,"RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199566, Requested 694. Please try again in 1m52.32s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+Q020,How many tracks are there for each media type?,False,agent_exception,"[""media_type"", ""track_count""]","[[""MPEG audio file"", 3034], [""Protected AAC audio file"", 237], [""Protected MPEG-4 video file"", 214], [""AAC audio file"", 11], [""Purchased AAC audio file"", 7]]",[],null,[],[],,"RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199564, Requested 696. Please try again in 1m52.32s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+Q021,Show the five longest tracks and their lengths in minutes.,False,agent_exception,"[""Name"", ""minutes""]","[[""Occupation / Precipice"", 88.12], [""Through a Looking Glass"", 84.81], [""Greetings from Earth, Pt. 1"", 49.34], [""The Man With Nine Lives"", 49.28], [""Battlestar Galactica, Pt. 2"", 49.27]]",[],null,[],[],,"RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199427, Requested 697. Please try again in 53.568s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+Q022,Which five tracks have the highest unit prices?,False,agent_exception,"[""Name"", ""UnitPrice""]","[[""\""?\"""", 1.99], [""...And Found"", 1.99], [""...In Translation"", 1.99], ["".07%"", 1.99], [""A Benihana Christmas, Pts. 1 & 2"", 1.99]]",[],null,[],[],,"RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199304, Requested 718. Please try again in 9.504s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+Q023,What is the average track length in minutes for each genre?,False,agent_exception,"[""genre"", ""avg_minutes""]","[[""Sci Fi & Fantasy"", 48.53], [""Science Fiction"", 43.76], [""Drama"", 42.92], [""TV Shows"", 35.75], [""Comedy"", 26.42], [""Metal"", 5.16], [""Electronica/Dance"", 5.05], [""Heavy Metal"", 4.96], [""Classical"", 4.9], [""Jazz"", 4.86], [""Rock"", 4.73], [""Blues"", 4.51], [""Alternative"", 4.4], [""Reggae"", 4.12], [""Soundtrack"", 4.07], [""Alternative & Punk"", 3.91], [""Latin"", 3.88], [""Pop"", 3.82], [""World"", 3.75], [""R&B/Soul"", 3.67], [""Bossa Nova"", 3.66], [""Easy Listening"", 3.15], [""Hip Hop/Rap"", 2.97], [""Opera"", 2.91], [""Rock And Roll"", 2.24]]",[],null,[],[],,"RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199882, Requested 3448. Please try again in 23m58.56s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+Q024,Which five genres generate the most sales revenue?,False,agent_exception,"[""genre"", ""revenue""]","[[""Rock"", 826.65], [""Latin"", 382.14], [""Metal"", 261.36], [""Alternative & Punk"", 241.56], [""TV Shows"", 93.53]]",[],null,[],[],,"RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199880, Requested 718. Please try again in 4m18.336s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+Q025,Which five billing cities have the highest revenue?,False,agent_exception,"[""BillingCity"", ""revenue""]","[[""Prague"", 90.24], [""Mountain View"", 77.24], [""Paris"", 77.24], [""Berlin"", 75.24], [""London"", 75.24]]",[],null,[],[],,"RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199878, Requested 569. Please try again in 3m13.104s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+Q026,Which customers have never made a purchase?,False,agent_exception,"[""CustomerId"", ""FirstName"", ""LastName""]",[],[],null,[],[],,"RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199875, Requested 568. Please try again in 3m11.376s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+Q027,Which five invoices contain the most line items?,False,agent_exception,"[""InvoiceId"", ""line_count""]","[[5, 14], [12, 14], [19, 14], [26, 14], [33, 14]]",[],null,[],[],,"RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199873, Requested 718. Please try again in 4m15.312s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+Q028,How much invoice revenue is associated with each support representative?,False,agent_exception,"[""EmployeeId"", ""FirstName"", ""LastName"", ""revenue""]","[[3, ""Jane"", ""Peacock"", 833.04], [4, ""Margaret"", ""Park"", 775.4], [5, ""Steve"", ""Johnson"", 720.16]]",[],null,[],[],,"RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199871, Requested 603. Please try again in 3m24.768s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+Q029,Show ten albums with their artist names and track counts.,False,agent_exception,"[""Title"", ""artist"", ""track_count""]","[[""For Those About To Rock We Salute You"", ""AC/DC"", 10], [""Balls to the Wall"", ""Accept"", 1], [""Restless and Wild"", ""Accept"", 3], [""Let There Be Rock"", ""AC/DC"", 8], [""Big Ones"", ""Aerosmith"", 15], [""Jagged Little Pill"", ""Alanis Morissette"", 13], [""Facelift"", ""Alice In Chains"", 12], [""Warner 25 Anos"", ""Antônio Carlos Jobim"", 14], [""Plays Metallica By Four Cellos"", ""Apocalyptica"", 8], [""Audioslave"", ""Audioslave"", 14]]",[],null,[],[],,"RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199868, Requested 603. Please try again in 3m23.471999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
+Q030,Which five countries have the highest average invoice amount?,False,agent_exception,"[""BillingCountry"", ""average_invoice""]","[[""Chile"", 6.66], [""Hungary"", 6.52], [""Ireland"", 6.52], [""Czech Republic"", 6.45], [""Austria"", 6.09]]",[],null,[],[],,"RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199866, Requested 719. Please try again in 4m12.72s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}"
