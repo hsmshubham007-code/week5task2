@@ -9,7 +9,7 @@ A read-only natural-language-to-SQL agent built with Python, LangGraph, Groq, an
 * **Rows:** 15,607
 * **LLM provider:** Groq
 * **Default model:** `openai/gpt-oss-20b`
-* **Automated local tests:** 36 passed
+* **Automated local tests:** 49 passed
 * **Golden evaluation set:** 30 answerable questions and 5 unanswerable questions
 * **Live prompt-injection evaluation:** Not yet completed
 
@@ -104,7 +104,7 @@ Some evaluation output files are generated when evaluation scripts run. The base
 ### 1. Clone the repository
 
 ```bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
+git clone https://github.com/hsmshubham007-code/week5task2.git
 cd week5task2
 ```
 
@@ -152,7 +152,7 @@ The current database contains 11 tables and 15,607 rows. The verification script
 python -m pytest -q
 ```
 
-The current recorded local result is **36 passed**. Re-run the tests after making changes.
+The current recorded local result is **49 passed**. Re-run the tests after making changes.
 
 ## Available Agent Tools
 
@@ -228,6 +228,20 @@ The run was heavily affected by Groq rate limits, including token-per-minute and
 
 The preserved baseline files are `evals/results_baseline.json` and `evals/results_baseline.csv`. A later evaluation should report completed questions, rate-limit failures, and the measured pass rate separately.
 
+### Latest Evaluation Attempt — 2026-10-12
+
+A subsequent live evaluation produced 30 question records, but all 30 were blocked by Groq rate limits. This run does not measure SQL-agent accuracy.
+
+An offline rescore using saved results could evaluate only 8 of the 30 questions. All 8 rescored questions passed (8/8); the remaining 22 had no usable saved result for rescoring. The 100% pass rate applies only to the rescored subset, not the complete evaluation set.
+
+Evidence files:
+
+- `evals/results_rate_limited.json` — latest rate-limit-confounded live run.
+- `evals/results_rescored.json` — offline rescore summary.
+- `evals/results_rescored.csv` — per-question rescore status.
+
+A reliable overall accuracy result still requires usable results for all 30 answerable questions.
+
 ## Failure Analysis
 
 The evaluation reports classify failures into categories such as:
@@ -291,7 +305,7 @@ The expected Rock-track count recorded during local verification is 1,297. These
 ## Current Verification Summary
 
 * Database verified: 11 tables and 15,607 rows.
-* Local automated tests: 36 passed.
+* Local automated tests: 49 passed.
 * Golden set: 30 answerable and 5 unanswerable questions.
 * Live evaluation: baseline incomplete due to rate limits.
 * Live prompt-injection outcomes: pending.

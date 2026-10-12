@@ -1,0 +1,1402 @@
+{
+  "timestamp_utc": "2026-10-12T08:12:36.074412+00:00",
+  "golden_set": "evals/golden_set.json",
+  "scoring_method": "Actual returned row data; column aliases ignored; ties in monotonic numeric rankings may appear in either order",
+  "total_answerable": 30,
+  "completed": 30,
+  "pending": 0,
+  "complete": true,
+  "passed": 0,
+  "failed": 30,
+  "pass_rate_percent": 0.0,
+  "failure_counts": {
+    "rate_limit": 30
+  },
+  "results": [
+    {
+      "id": "Q001",
+      "question": "How many customers are in the database?",
+      "passed": false,
+      "failure_category": "rate_limit",
+      "expected_columns": [
+        "customer_count"
+      ],
+      "expected_rows": [
+        [
+          59
+        ]
+      ],
+      "actual_columns": [],
+      "actual_rows": null,
+      "generated_sql": [],
+      "sql_errors": [],
+      "agent_answer": "",
+      "exception": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199323, Requested 1315. Please try again in 4m35.616s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "reused_previous_result": false
+    },
+    {
+      "id": "Q002",
+      "question": "How many employees are there?",
+      "passed": false,
+      "failure_category": "rate_limit",
+      "expected_columns": [
+        "employee_count"
+      ],
+      "expected_rows": [
+        [
+          8
+        ]
+      ],
+      "actual_columns": [],
+      "actual_rows": null,
+      "generated_sql": [],
+      "sql_errors": [],
+      "agent_answer": "",
+      "exception": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199321, Requested 1081. Please try again in 2m53.664s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "reused_previous_result": false
+    },
+    {
+      "id": "Q003",
+      "question": "How many music tracks are available?",
+      "passed": false,
+      "failure_category": "rate_limit",
+      "expected_columns": [
+        "track_count"
+      ],
+      "expected_rows": [
+        [
+          3503
+        ]
+      ],
+      "actual_columns": [],
+      "actual_rows": null,
+      "generated_sql": [],
+      "sql_errors": [],
+      "agent_answer": "",
+      "exception": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199319, Requested 1314. Please try again in 4m33.455999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "reused_previous_result": false
+    },
+    {
+      "id": "Q004",
+      "question": "How many artists are represented?",
+      "passed": false,
+      "failure_category": "rate_limit",
+      "expected_columns": [
+        "artist_count"
+      ],
+      "expected_rows": [
+        [
+          275
+        ]
+      ],
+      "actual_columns": [],
+      "actual_rows": null,
+      "generated_sql": [],
+      "sql_errors": [],
+      "agent_answer": "",
+      "exception": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199316, Requested 1081. Please try again in 2m51.504s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "reused_previous_result": false
+    },
+    {
+      "id": "Q005",
+      "question": "How many albums are in the catalog?",
+      "passed": false,
+      "failure_category": "rate_limit",
+      "expected_columns": [
+        "album_count"
+      ],
+      "expected_rows": [
+        [
+          347
+        ]
+      ],
+      "actual_columns": [],
+      "actual_rows": null,
+      "generated_sql": [],
+      "sql_errors": [],
+      "agent_answer": "",
+      "exception": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199314, Requested 1050. Please try again in 2m37.248s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "reused_previous_result": false
+    },
+    {
+      "id": "Q006",
+      "question": "How many invoices have been recorded?",
+      "passed": false,
+      "failure_category": "rate_limit",
+      "expected_columns": [
+        "invoice_count"
+      ],
+      "expected_rows": [
+        [
+          412
+        ]
+      ],
+      "actual_columns": [],
+      "actual_rows": null,
+      "generated_sql": [],
+      "sql_errors": [],
+      "agent_answer": "",
+      "exception": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199311, Requested 1314. Please try again in 4m30s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "reused_previous_result": false
+    },
+    {
+      "id": "Q007",
+      "question": "Which five countries have the most customers?",
+      "passed": false,
+      "failure_category": "rate_limit",
+      "expected_columns": [
+        "Country",
+        "customers"
+      ],
+      "expected_rows": [
+        [
+          "USA",
+          13
+        ],
+        [
+          "Canada",
+          8
+        ],
+        [
+          "Brazil",
+          5
+        ],
+        [
+          "France",
+          5
+        ],
+        [
+          "Germany",
+          4
+        ]
+      ],
+      "actual_columns": [],
+      "actual_rows": null,
+      "generated_sql": [],
+      "sql_errors": [],
+      "agent_answer": "",
+      "exception": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199309, Requested 1050. Please try again in 2m35.088s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "reused_previous_result": false
+    },
+    {
+      "id": "Q008",
+      "question": "How many customers live in Canada?",
+      "passed": false,
+      "failure_category": "rate_limit",
+      "expected_columns": [
+        "customers"
+      ],
+      "expected_rows": [
+        [
+          8
+        ]
+      ],
+      "actual_columns": [],
+      "actual_rows": null,
+      "generated_sql": [],
+      "sql_errors": [],
+      "agent_answer": "",
+      "exception": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199307, Requested 1082. Please try again in 2m48.048s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "reused_previous_result": false
+    },
+    {
+      "id": "Q009",
+      "question": "Show ten customers and their assigned support representatives.",
+      "passed": false,
+      "failure_category": "rate_limit",
+      "expected_columns": [
+        "FirstName",
+        "LastName",
+        "rep_first_name",
+        "rep_last_name"
+      ],
+      "expected_rows": [
+        [
+          "Luís",
+          "Gonçalves",
+          "Jane",
+          "Peacock"
+        ],
+        [
+          "Leonie",
+          "Köhler",
+          "Steve",
+          "Johnson"
+        ],
+        [
+          "François",
+          "Tremblay",
+          "Jane",
+          "Peacock"
+        ],
+        [
+          "Bjørn",
+          "Hansen",
+          "Margaret",
+          "Park"
+        ],
+        [
+          "František",
+          "Wichterlová",
+          "Margaret",
+          "Park"
+        ],
+        [
+          "Helena",
+          "Holý",
+          "Steve",
+          "Johnson"
+        ],
+        [
+          "Astrid",
+          "Gruber",
+          "Steve",
+          "Johnson"
+        ],
+        [
+          "Daan",
+          "Peeters",
+          "Margaret",
+          "Park"
+        ],
+        [
+          "Kara",
+          "Nielsen",
+          "Margaret",
+          "Park"
+        ],
+        [
+          "Eduardo",
+          "Martins",
+          "Margaret",
+          "Park"
+        ]
+      ],
+      "actual_columns": [],
+      "actual_rows": null,
+      "generated_sql": [],
+      "sql_errors": [],
+      "agent_answer": "",
+      "exception": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199302, Requested 1305. Please try again in 4m22.224s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "reused_previous_result": false
+    },
+    {
+      "id": "Q010",
+      "question": "Which five customers have the most invoices?",
+      "passed": false,
+      "failure_category": "rate_limit",
+      "expected_columns": [
+        "CustomerId",
+        "FirstName",
+        "LastName",
+        "invoice_count"
+      ],
+      "expected_rows": [
+        [
+          1,
+          "Luís",
+          "Gonçalves",
+          7
+        ],
+        [
+          2,
+          "Leonie",
+          "Köhler",
+          7
+        ],
+        [
+          3,
+          "François",
+          "Tremblay",
+          7
+        ],
+        [
+          4,
+          "Bjørn",
+          "Hansen",
+          7
+        ],
+        [
+          5,
+          "František",
+          "Wichterlová",
+          7
+        ]
+      ],
+      "actual_columns": [],
+      "actual_rows": null,
+      "generated_sql": [],
+      "sql_errors": [],
+      "agent_answer": "",
+      "exception": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199299, Requested 1304. Please try again in 4m20.495999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "reused_previous_result": false
+    },
+    {
+      "id": "Q011",
+      "question": "Which five customers have spent the most money?",
+      "passed": false,
+      "failure_category": "rate_limit",
+      "expected_columns": [
+        "CustomerId",
+        "FirstName",
+        "LastName",
+        "total_spent"
+      ],
+      "expected_rows": [
+        [
+          6,
+          "Helena",
+          "Holý",
+          49.62
+        ],
+        [
+          26,
+          "Richard",
+          "Cunningham",
+          47.62
+        ],
+        [
+          57,
+          "Luis",
+          "Rojas",
+          46.62
+        ],
+        [
+          45,
+          "Ladislav",
+          "Kovács",
+          45.62
+        ],
+        [
+          46,
+          "Hugh",
+          "O'Reilly",
+          45.62
+        ]
+      ],
+      "actual_columns": [],
+      "actual_rows": null,
+      "generated_sql": [],
+      "sql_errors": [],
+      "agent_answer": "",
+      "exception": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199297, Requested 1301. Please try again in 4m18.336s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "reused_previous_result": false
+    },
+    {
+      "id": "Q012",
+      "question": "Which five billing countries generate the most revenue?",
+      "passed": false,
+      "failure_category": "rate_limit",
+      "expected_columns": [
+        "BillingCountry",
+        "revenue"
+      ],
+      "expected_rows": [
+        [
+          "USA",
+          523.06
+        ],
+        [
+          "Canada",
+          303.96
+        ],
+        [
+          "France",
+          195.1
+        ],
+        [
+          "Brazil",
+          190.1
+        ],
+        [
+          "Germany",
+          156.48
+        ]
+      ],
+      "actual_columns": [],
+      "actual_rows": null,
+      "generated_sql": [],
+      "sql_errors": [],
+      "agent_answer": "",
+      "exception": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199295, Requested 1051. Please try again in 2m29.472s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "reused_previous_result": false
+    },
+    {
+      "id": "Q013",
+      "question": "What is the total revenue from all invoices?",
+      "passed": false,
+      "failure_category": "rate_limit",
+      "expected_columns": [
+        "total_revenue"
+      ],
+      "expected_rows": [
+        [
+          2328.6
+        ]
+      ],
+      "actual_columns": [],
+      "actual_rows": null,
+      "generated_sql": [],
+      "sql_errors": [],
+      "agent_answer": "",
+      "exception": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199292, Requested 1051. Please try again in 2m28.176s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "reused_previous_result": false
+    },
+    {
+      "id": "Q014",
+      "question": "What is the average invoice amount?",
+      "passed": false,
+      "failure_category": "rate_limit",
+      "expected_columns": [
+        "average_invoice"
+      ],
+      "expected_rows": [
+        [
+          5.65
+        ]
+      ],
+      "actual_columns": [],
+      "actual_rows": null,
+      "generated_sql": [],
+      "sql_errors": [],
+      "agent_answer": "",
+      "exception": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199290, Requested 1299. Please try again in 4m14.448s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "reused_previous_result": false
+    },
+    {
+      "id": "Q015",
+      "question": "What is the monthly revenue, ordered from earliest to latest month?",
+      "passed": false,
+      "failure_category": "rate_limit",
+      "expected_columns": [
+        "month",
+        "revenue"
+      ],
+      "expected_rows": [
+        [
+          "2009-01",
+          35.64
+        ],
+        [
+          "2009-02",
+          37.62
+        ],
+        [
+          "2009-03",
+          37.62
+        ],
+        [
+          "2009-04",
+          37.62
+        ],
+        [
+          "2009-05",
+          37.62
+        ],
+        [
+          "2009-06",
+          37.62
+        ],
+        [
+          "2009-07",
+          37.62
+        ],
+        [
+          "2009-08",
+          37.62
+        ],
+        [
+          "2009-09",
+          37.62
+        ],
+        [
+          "2009-10",
+          37.62
+        ],
+        [
+          "2009-11",
+          37.62
+        ],
+        [
+          "2009-12",
+          37.62
+        ],
+        [
+          "2010-01",
+          52.62
+        ],
+        [
+          "2010-02",
+          46.62
+        ],
+        [
+          "2010-03",
+          44.62
+        ],
+        [
+          "2010-04",
+          37.62
+        ],
+        [
+          "2010-05",
+          37.62
+        ],
+        [
+          "2010-06",
+          37.62
+        ],
+        [
+          "2010-07",
+          37.62
+        ],
+        [
+          "2010-08",
+          37.62
+        ],
+        [
+          "2010-09",
+          36.63
+        ],
+        [
+          "2010-10",
+          37.62
+        ],
+        [
+          "2010-11",
+          37.62
+        ],
+        [
+          "2010-12",
+          37.62
+        ],
+        [
+          "2011-01",
+          37.62
+        ],
+        [
+          "2011-02",
+          37.62
+        ],
+        [
+          "2011-03",
+          37.62
+        ],
+        [
+          "2011-04",
+          51.62
+        ],
+        [
+          "2011-05",
+          42.62
+        ],
+        [
+          "2011-06",
+          50.62
+        ],
+        [
+          "2011-07",
+          37.62
+        ],
+        [
+          "2011-08",
+          37.62
+        ],
+        [
+          "2011-09",
+          37.62
+        ],
+        [
+          "2011-10",
+          37.62
+        ],
+        [
+          "2011-11",
+          23.76
+        ],
+        [
+          "2011-12",
+          37.62
+        ],
+        [
+          "2012-01",
+          37.62
+        ],
+        [
+          "2012-02",
+          37.62
+        ],
+        [
+          "2012-03",
+          37.62
+        ],
+        [
+          "2012-04",
+          37.62
+        ],
+        [
+          "2012-05",
+          37.62
+        ],
+        [
+          "2012-06",
+          37.62
+        ],
+        [
+          "2012-07",
+          39.62
+        ],
+        [
+          "2012-08",
+          47.62
+        ],
+        [
+          "2012-09",
+          46.71
+        ],
+        [
+          "2012-10",
+          42.62
+        ],
+        [
+          "2012-11",
+          37.62
+        ],
+        [
+          "2012-12",
+          37.62
+        ],
+        [
+          "2013-01",
+          37.62
+        ],
+        [
+          "2013-02",
+          27.72
+        ],
+        [
+          "2013-03",
+          37.62
+        ],
+        [
+          "2013-04",
+          33.66
+        ],
+        [
+          "2013-05",
+          37.62
+        ],
+        [
+          "2013-06",
+          37.62
+        ],
+        [
+          "2013-07",
+          37.62
+        ],
+        [
+          "2013-08",
+          37.62
+        ],
+        [
+          "2013-09",
+          37.62
+        ],
+        [
+          "2013-10",
+          37.62
+        ],
+        [
+          "2013-11",
+          49.62
+        ],
+        [
+          "2013-12",
+          38.62
+        ]
+      ],
+      "actual_columns": [],
+      "actual_rows": null,
+      "generated_sql": [],
+      "sql_errors": [],
+      "agent_answer": "",
+      "exception": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199287, Requested 1055. Please try again in 2m27.744s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "reused_previous_result": false
+    },
+    {
+      "id": "Q016",
+      "question": "Which five genres contain the most tracks?",
+      "passed": false,
+      "failure_category": "rate_limit",
+      "expected_columns": [
+        "genre",
+        "track_count"
+      ],
+      "expected_rows": [
+        [
+          "Rock",
+          1297
+        ],
+        [
+          "Latin",
+          579
+        ],
+        [
+          "Metal",
+          374
+        ],
+        [
+          "Alternative & Punk",
+          332
+        ],
+        [
+          "Jazz",
+          130
+        ]
+      ],
+      "actual_columns": [],
+      "actual_rows": null,
+      "generated_sql": [],
+      "sql_errors": [],
+      "agent_answer": "",
+      "exception": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199285, Requested 1300. Please try again in 4m12.72s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "reused_previous_result": false
+    },
+    {
+      "id": "Q017",
+      "question": "Which five albums have the most tracks?",
+      "passed": false,
+      "failure_category": "rate_limit",
+      "expected_columns": [
+        "Title",
+        "track_count"
+      ],
+      "expected_rows": [
+        [
+          "Greatest Hits",
+          57
+        ],
+        [
+          "Minha Historia",
+          34
+        ],
+        [
+          "Unplugged",
+          30
+        ],
+        [
+          "Lost, Season 3",
+          26
+        ],
+        [
+          "Lost, Season 1",
+          25
+        ]
+      ],
+      "actual_columns": [],
+      "actual_rows": null,
+      "generated_sql": [],
+      "sql_errors": [],
+      "agent_answer": "",
+      "exception": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199282, Requested 1083. Please try again in 2m37.68s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "reused_previous_result": false
+    },
+    {
+      "id": "Q018",
+      "question": "Which five artists have released the most albums?",
+      "passed": false,
+      "failure_category": "rate_limit",
+      "expected_columns": [
+        "Name",
+        "album_count"
+      ],
+      "expected_rows": [
+        [
+          "Iron Maiden",
+          21
+        ],
+        [
+          "Led Zeppelin",
+          14
+        ],
+        [
+          "Deep Purple",
+          11
+        ],
+        [
+          "Metallica",
+          10
+        ],
+        [
+          "U2",
+          10
+        ]
+      ],
+      "actual_columns": [],
+      "actual_rows": null,
+      "generated_sql": [],
+      "sql_errors": [],
+      "agent_answer": "",
+      "exception": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199280, Requested 1301. Please try again in 4m10.992s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "reused_previous_result": false
+    },
+    {
+      "id": "Q019",
+      "question": "Which five playlists contain the most tracks?",
+      "passed": false,
+      "failure_category": "rate_limit",
+      "expected_columns": [
+        "Name",
+        "track_count"
+      ],
+      "expected_rows": [
+        [
+          "Music",
+          3290
+        ],
+        [
+          "Music",
+          3290
+        ],
+        [
+          "90’s Music",
+          1477
+        ],
+        [
+          "TV Shows",
+          213
+        ],
+        [
+          "TV Shows",
+          213
+        ]
+      ],
+      "actual_columns": [],
+      "actual_rows": null,
+      "generated_sql": [],
+      "sql_errors": [],
+      "agent_answer": "",
+      "exception": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199277, Requested 1083. Please try again in 2m35.519999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "reused_previous_result": false
+    },
+    {
+      "id": "Q020",
+      "question": "How many tracks are there for each media type?",
+      "passed": false,
+      "failure_category": "rate_limit",
+      "expected_columns": [
+        "media_type",
+        "track_count"
+      ],
+      "expected_rows": [
+        [
+          "MPEG audio file",
+          3034
+        ],
+        [
+          "Protected AAC audio file",
+          237
+        ],
+        [
+          "Protected MPEG-4 video file",
+          214
+        ],
+        [
+          "AAC audio file",
+          11
+        ],
+        [
+          "Purchased AAC audio file",
+          7
+        ]
+      ],
+      "actual_columns": [],
+      "actual_rows": null,
+      "generated_sql": [],
+      "sql_errors": [],
+      "agent_answer": "",
+      "exception": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199275, Requested 1305. Please try again in 4m10.559999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "reused_previous_result": false
+    },
+    {
+      "id": "Q021",
+      "question": "Show the five longest tracks and their lengths in minutes.",
+      "passed": false,
+      "failure_category": "rate_limit",
+      "expected_columns": [
+        "Name",
+        "minutes"
+      ],
+      "expected_rows": [
+        [
+          "Occupation / Precipice",
+          88.12
+        ],
+        [
+          "Through a Looking Glass",
+          84.81
+        ],
+        [
+          "Greetings from Earth, Pt. 1",
+          49.34
+        ],
+        [
+          "The Man With Nine Lives",
+          49.28
+        ],
+        [
+          "Battlestar Galactica, Pt. 2",
+          49.27
+        ]
+      ],
+      "actual_columns": [],
+      "actual_rows": null,
+      "generated_sql": [],
+      "sql_errors": [],
+      "agent_answer": "",
+      "exception": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199272, Requested 1306. Please try again in 4m9.696s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "reused_previous_result": false
+    },
+    {
+      "id": "Q022",
+      "question": "Which five tracks have the highest unit prices?",
+      "passed": false,
+      "failure_category": "rate_limit",
+      "expected_columns": [
+        "Name",
+        "UnitPrice"
+      ],
+      "expected_rows": [
+        [
+          "\"?\"",
+          1.99
+        ],
+        [
+          "...And Found",
+          1.99
+        ],
+        [
+          "...In Translation",
+          1.99
+        ],
+        [
+          ".07%",
+          1.99
+        ],
+        [
+          "A Benihana Christmas, Pts. 1 & 2",
+          1.99
+        ]
+      ],
+      "actual_columns": [],
+      "actual_rows": null,
+      "generated_sql": [],
+      "sql_errors": [],
+      "agent_answer": "",
+      "exception": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199270, Requested 1051. Please try again in 2m18.672s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "reused_previous_result": false
+    },
+    {
+      "id": "Q023",
+      "question": "What is the average track length in minutes for each genre?",
+      "passed": false,
+      "failure_category": "rate_limit",
+      "expected_columns": [
+        "genre",
+        "avg_minutes"
+      ],
+      "expected_rows": [
+        [
+          "Sci Fi & Fantasy",
+          48.53
+        ],
+        [
+          "Science Fiction",
+          43.76
+        ],
+        [
+          "Drama",
+          42.92
+        ],
+        [
+          "TV Shows",
+          35.75
+        ],
+        [
+          "Comedy",
+          26.42
+        ],
+        [
+          "Metal",
+          5.16
+        ],
+        [
+          "Electronica/Dance",
+          5.05
+        ],
+        [
+          "Heavy Metal",
+          4.96
+        ],
+        [
+          "Classical",
+          4.9
+        ],
+        [
+          "Jazz",
+          4.86
+        ],
+        [
+          "Rock",
+          4.73
+        ],
+        [
+          "Blues",
+          4.51
+        ],
+        [
+          "Alternative",
+          4.4
+        ],
+        [
+          "Reggae",
+          4.12
+        ],
+        [
+          "Soundtrack",
+          4.07
+        ],
+        [
+          "Alternative & Punk",
+          3.91
+        ],
+        [
+          "Latin",
+          3.88
+        ],
+        [
+          "Pop",
+          3.82
+        ],
+        [
+          "World",
+          3.75
+        ],
+        [
+          "R&B/Soul",
+          3.67
+        ],
+        [
+          "Bossa Nova",
+          3.66
+        ],
+        [
+          "Easy Listening",
+          3.15
+        ],
+        [
+          "Hip Hop/Rap",
+          2.97
+        ],
+        [
+          "Opera",
+          2.91
+        ],
+        [
+          "Rock And Roll",
+          2.24
+        ]
+      ],
+      "actual_columns": [],
+      "actual_rows": null,
+      "generated_sql": [],
+      "sql_errors": [],
+      "agent_answer": "",
+      "exception": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199267, Requested 1087. Please try again in 2m32.928s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "reused_previous_result": false
+    },
+    {
+      "id": "Q024",
+      "question": "Which five genres generate the most sales revenue?",
+      "passed": false,
+      "failure_category": "rate_limit",
+      "expected_columns": [
+        "genre",
+        "revenue"
+      ],
+      "expected_rows": [
+        [
+          "Rock",
+          826.65
+        ],
+        [
+          "Latin",
+          382.14
+        ],
+        [
+          "Metal",
+          261.36
+        ],
+        [
+          "Alternative & Punk",
+          241.56
+        ],
+        [
+          "TV Shows",
+          93.53
+        ]
+      ],
+      "actual_columns": [],
+      "actual_rows": null,
+      "generated_sql": [],
+      "sql_errors": [],
+      "agent_answer": "",
+      "exception": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199265, Requested 1304. Please try again in 4m5.808s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "reused_previous_result": false
+    },
+    {
+      "id": "Q025",
+      "question": "Which five billing cities have the highest revenue?",
+      "passed": false,
+      "failure_category": "rate_limit",
+      "expected_columns": [
+        "BillingCity",
+        "revenue"
+      ],
+      "expected_rows": [
+        [
+          "Prague",
+          90.24
+        ],
+        [
+          "Mountain View",
+          77.24
+        ],
+        [
+          "Paris",
+          77.24
+        ],
+        [
+          "Berlin",
+          75.24
+        ],
+        [
+          "London",
+          75.24
+        ]
+      ],
+      "actual_columns": [],
+      "actual_rows": null,
+      "generated_sql": [],
+      "sql_errors": [],
+      "agent_answer": "",
+      "exception": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199262, Requested 1084. Please try again in 2m29.472s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "reused_previous_result": false
+    },
+    {
+      "id": "Q026",
+      "question": "Which customers have never made a purchase?",
+      "passed": false,
+      "failure_category": "rate_limit",
+      "expected_columns": [
+        "CustomerId",
+        "FirstName",
+        "LastName"
+      ],
+      "expected_rows": [],
+      "actual_columns": [],
+      "actual_rows": null,
+      "generated_sql": [],
+      "sql_errors": [],
+      "agent_answer": "",
+      "exception": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199260, Requested 1303. Please try again in 4m3.215999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "reused_previous_result": false
+    },
+    {
+      "id": "Q027",
+      "question": "Which five invoices contain the most line items?",
+      "passed": false,
+      "failure_category": "rate_limit",
+      "expected_columns": [
+        "InvoiceId",
+        "line_count"
+      ],
+      "expected_rows": [
+        [
+          5,
+          14
+        ],
+        [
+          12,
+          14
+        ],
+        [
+          19,
+          14
+        ],
+        [
+          26,
+          14
+        ],
+        [
+          33,
+          14
+        ]
+      ],
+      "actual_columns": [],
+      "actual_rows": null,
+      "generated_sql": [],
+      "sql_errors": [],
+      "agent_answer": "",
+      "exception": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199258, Requested 1084. Please try again in 2m27.744s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "reused_previous_result": false
+    },
+    {
+      "id": "Q028",
+      "question": "How much invoice revenue is associated with each support representative?",
+      "passed": false,
+      "failure_category": "rate_limit",
+      "expected_columns": [
+        "EmployeeId",
+        "FirstName",
+        "LastName",
+        "revenue"
+      ],
+      "expected_rows": [
+        [
+          3,
+          "Jane",
+          "Peacock",
+          833.04
+        ],
+        [
+          4,
+          "Margaret",
+          "Park",
+          775.4
+        ],
+        [
+          5,
+          "Steve",
+          "Johnson",
+          720.16
+        ]
+      ],
+      "actual_columns": [],
+      "actual_rows": null,
+      "generated_sql": [],
+      "sql_errors": [],
+      "agent_answer": "",
+      "exception": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199255, Requested 1306. Please try again in 4m2.352s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "reused_previous_result": false
+    },
+    {
+      "id": "Q029",
+      "question": "Show ten albums with their artist names and track counts.",
+      "passed": false,
+      "failure_category": "rate_limit",
+      "expected_columns": [
+        "Title",
+        "artist",
+        "track_count"
+      ],
+      "expected_rows": [
+        [
+          "For Those About To Rock We Salute You",
+          "AC/DC",
+          10
+        ],
+        [
+          "Balls to the Wall",
+          "Accept",
+          1
+        ],
+        [
+          "Restless and Wild",
+          "Accept",
+          3
+        ],
+        [
+          "Let There Be Rock",
+          "AC/DC",
+          8
+        ],
+        [
+          "Big Ones",
+          "Aerosmith",
+          15
+        ],
+        [
+          "Jagged Little Pill",
+          "Alanis Morissette",
+          13
+        ],
+        [
+          "Facelift",
+          "Alice In Chains",
+          12
+        ],
+        [
+          "Warner 25 Anos",
+          "Antônio Carlos Jobim",
+          14
+        ],
+        [
+          "Plays Metallica By Four Cellos",
+          "Apocalyptica",
+          8
+        ],
+        [
+          "Audioslave",
+          "Audioslave",
+          14
+        ]
+      ],
+      "actual_columns": [],
+      "actual_rows": null,
+      "generated_sql": [],
+      "sql_errors": [],
+      "agent_answer": "",
+      "exception": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199253, Requested 1053. Please try again in 2m12.191999999s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "reused_previous_result": false
+    },
+    {
+      "id": "Q030",
+      "question": "Which five countries have the highest average invoice amount?",
+      "passed": false,
+      "failure_category": "rate_limit",
+      "expected_columns": [
+        "BillingCountry",
+        "average_invoice"
+      ],
+      "expected_rows": [
+        [
+          "Chile",
+          6.66
+        ],
+        [
+          "Hungary",
+          6.52
+        ],
+        [
+          "Ireland",
+          6.52
+        ],
+        [
+          "Czech Republic",
+          6.45
+        ],
+        [
+          "Austria",
+          6.09
+        ]
+      ],
+      "actual_columns": [],
+      "actual_rows": null,
+      "generated_sql": [],
+      "sql_errors": [],
+      "agent_answer": "",
+      "exception": "RateLimitError: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01m1b89fyeek18rds7cckrh66h` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199250, Requested 1085. Please try again in 2m24.72s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}",
+      "reused_previous_result": false
+    }
+  ]
+}

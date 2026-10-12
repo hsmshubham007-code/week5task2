@@ -1,4 +1,3 @@
-
 import json
 
 import evals.evaluate_agent as evaluator
@@ -44,9 +43,13 @@ def configure_temp_paths(tmp_path, monkeypatch, question_count=5):
         monkeypatch.setattr(evaluator, name, path)
 
     paths["GOLDEN_SET_PATH"].write_text(
-        json.dumps([make_question(i) for i in range(1, question_count + 1)]),
+        json.dumps([
+            make_question(i)
+            for i in range(1, question_count + 1)
+        ]),
         encoding="utf-8",
     )
+
     return paths
 
 
@@ -63,13 +66,15 @@ def test_daily_quota_error_is_detected():
 def test_daily_quota_stops_run_and_leaves_questions_pending(
     tmp_path, monkeypatch
 ):
-    paths = configure_temp_paths(tmp_path, monkeypatch, question_count=5)
+    paths = configure_temp_paths(tmp_path, monkeypatch)
     calls = []
 
     def fake_agent(question):
         calls.append(question)
+
         if len(calls) == 1:
             return successful_agent_result()
+
         raise RuntimeError(
             "RateLimitError: tokens per day (TPD): limit 200000"
         )
@@ -92,10 +97,8 @@ def test_daily_quota_stops_run_and_leaves_questions_pending(
     assert report["failure_counts"]["daily_quota_exhausted"] == 1
 
 
-def test_smoke_test_runs_only_three_questions(
-    tmp_path, monkeypatch
-):
-    paths = configure_temp_paths(tmp_path, monkeypatch, question_count=5)
+def test_smoke_test_runs_only_three_questions(tmp_path, monkeypatch):
+    paths = configure_temp_paths(tmp_path, monkeypatch)
     calls = []
 
     def fake_agent(question):
@@ -104,7 +107,8 @@ def test_smoke_test_runs_only_three_questions(
 
     monkeypatch.setattr(evaluator, "ask_agent", fake_agent)
     monkeypatch.setattr(
-        "sys.argv", ["evaluate_agent.py", "--smoke-test"]
+        "sys.argv",
+        ["evaluate_agent.py", "--smoke-test"],
     )
 
     exit_code = evaluator.main()
@@ -122,7 +126,7 @@ def test_smoke_test_runs_only_three_questions(
 
 
 def test_smoke_count_can_be_customized(tmp_path, monkeypatch):
-    configure_temp_paths(tmp_path, monkeypatch, question_count=5)
+    paths = configure_temp_paths(tmp_path, monkeypatch)
     calls = []
 
     def fake_agent(question):
@@ -132,10 +136,23 @@ def test_smoke_count_can_be_customized(tmp_path, monkeypatch):
     monkeypatch.setattr(evaluator, "ask_agent", fake_agent)
     monkeypatch.setattr(
         "sys.argv",
-        ["evaluate_agent.py", "--smoke-test", "--smoke-count", "2"],
+        [
+            "evaluate_agent.py",
+            "--smoke-test",
+            "--smoke-count",
+            "2",
+        ],
     )
 
     exit_code = evaluator.main()
 
+    report = json.loads(
+        paths["RESULTS_JSON_PATH"].read_text(encoding="utf-8")
+    )
+
     assert exit_code == 0
     assert len(calls) == 2
+    assert report["completed"] == 2
+    assert report["pending"] == 3
+    assert report["complete"] is False
+    assert report["passed"] == 2
