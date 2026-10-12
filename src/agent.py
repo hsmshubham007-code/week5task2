@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import time
 from typing import Annotated, TypedDict
 
 from dotenv import load_dotenv
@@ -26,6 +27,17 @@ from src.agent_tools import (
 load_dotenv()
 
 MAX_TOOL_ROUNDS = 5
+
+# Configure these values in .env.
+REQUEST_DELAY = max(
+    0.0, float(os.getenv("GROQ_REQUEST_DELAY_SECONDS", "3"))
+)
+MAX_RATE_LIMIT_RETRIES = max(
+    0, int(os.getenv("GROQ_RATE_LIMIT_RETRIES", "3"))
+)
+RETRY_BASE_SECONDS = max(
+    1.0, float(os.getenv("GROQ_RETRY_BASE_SECONDS", "5"))
+)
 
 SYSTEM_PROMPT = """
 You are a careful natural-language-to-SQL assistant for the Chinook
@@ -112,6 +124,69 @@ class AgentState(TypedDict):
     tool_rounds: int
 
 
+def is_daily_quota_error(error: Exception) -> bool:
+    """Detect exhausted daily token quotas that retries cannot fix."""
+    message = str(error).lower()
+    return any(
+        marker in message
+        for marker in (
+            "tokens per day",
+            "tpd): limit",
+            "daily token quota",
+            "daily quota",
+            "per-day token limit",
+            "per day token limit",
+        )
+    )
+
+
+def is_rate_limit_error(error: Exception) -> bool:
+    """Identify provider rate-limit errors."""
+    message = str(error).lower()
+    return any(
+        marker in message
+        for marker in (
+            "429",
+            "ratelimiterror",
+            "rate_limit_exceeded",
+            "rate limit",
+            "tokens per minute",
+            "tokens per day",
+            "tpm): limit",
+            "tpd): limit",
+        )
+    )
+
+
+def invoke_with_rate_limit_protection(llm, messages):
+    """Pace requests and retry temporary rate limits with backoff."""
+    for attempt in range(MAX_RATE_LIMIT_RETRIES + 1):
+        if REQUEST_DELAY:
+            time.sleep(REQUEST_DELAY)
+
+        try:
+            return llm.invoke(messages)
+        except Exception as exc:
+            if is_daily_quota_error(exc):
+                raise
+
+            if (
+                not is_rate_limit_error(exc)
+                or attempt >= MAX_RATE_LIMIT_RETRIES
+            ):
+                raise
+
+            wait_seconds = RETRY_BASE_SECONDS * (2 ** attempt)
+            print(
+                f"Groq rate limit hit. Retrying in "
+                f"{wait_seconds:.0f} seconds "
+                f"({attempt + 1}/{MAX_RATE_LIMIT_RETRIES})."
+            )
+            time.sleep(wait_seconds)
+
+    raise RuntimeError("Groq request failed after retries.")
+
+
 def build_agent():
     api_key = os.getenv("GROQ_API_KEY")
     model_name = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
@@ -125,12 +200,13 @@ def build_agent():
         model=model_name,
         api_key=api_key,
         temperature=0,
-        max_retries=1,
+        max_retries=0,
     ).bind_tools(TOOLS)
 
     def assistant_node(state: AgentState) -> dict:
-        response = llm.invoke(
-            [SystemMessage(content=SYSTEM_PROMPT), *state["messages"]]
+        response = invoke_with_rate_limit_protection(
+            llm,
+            [SystemMessage(content=SYSTEM_PROMPT), *state["messages"]],
         )
         return {
             "messages": [response],
@@ -192,7 +268,7 @@ def build_agent():
 
 
 def ask_agent(question: str) -> dict:
-    """Answer a question and return the response, generated SQL, and tool logs."""
+    """Answer a question and return the response, SQL, and tool logs."""
     if not isinstance(question, str) or not question.strip():
         raise ValueError("Question must not be empty.")
 
