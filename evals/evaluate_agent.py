@@ -1,3 +1,4 @@
+
 """Evaluate the SQL agent against the pre-created golden set.
 
 Scores actual SQL result data, not generated SQL text.
@@ -38,6 +39,11 @@ RETRY_CATEGORIES = {
     "sql_execution_error",
     "no_sql_result",
     "malformed_sql_result",
+}
+
+PROVIDER_INTERRUPTION_CATEGORIES = {
+    "rate_limit",
+    "daily_quota_exhausted",
 }
 
 
@@ -276,20 +282,35 @@ def classify_result(
     return True, "pass", actual_columns, actual_rows
 
 
+def count_provider_interruptions(records: list[dict[str, Any]]) -> int:
+    """Count requests interrupted by provider rate limits."""
+    return sum(
+        1
+        for record in records
+        if record.get("failure_category") in PROVIDER_INTERRUPTION_CATEGORIES
+    )
+
+
 def write_reports(
     records: list[dict[str, Any]],
     total: int,
     complete: bool,
 ) -> None:
-    """Persist merged progress, including pending questions."""
+    """Persist progress while separating interruptions from SQL evaluations."""
+    attempted = len(records)
+    provider_interruptions = count_provider_interruptions(records)
+    completed = attempted - provider_interruptions
     passed = sum(1 for record in records if record["passed"])
-    failed = len(records) - passed
+    failed = completed - passed
+    pending = max(0, total - completed)
+
     counts = Counter(
         record["failure_category"]
         for record in records
         if not record["passed"] and record["failure_category"]
     )
-    completed = len(records)
+
+    is_complete = complete and pending == 0 and provider_interruptions == 0
 
     summary = {
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
@@ -299,11 +320,13 @@ def write_reports(
             "ties in monotonic numeric rankings may appear in either order"
         ),
         "total_answerable": total,
+        "attempted": attempted,
         "completed": completed,
-        "pending": max(0, total - completed),
-        "complete": complete,
+        "pending": pending,
+        "complete": is_complete,
         "passed": passed,
         "failed": failed,
+        "provider_interruptions": provider_interruptions,
         "pass_rate_percent": round(passed / completed * 100, 2)
         if completed else 0.0,
         "failure_counts": dict(sorted(counts.items())),
@@ -335,11 +358,13 @@ def write_reports(
 
     taxonomy = {
         "total_questions": total,
+        "attempted": attempted,
         "completed": completed,
-        "pending": max(0, total - completed),
-        "complete": complete,
+        "pending": pending,
+        "complete": is_complete,
         "passed": passed,
         "failed": failed,
+        "provider_interruptions": provider_interruptions,
         "failure_counts": dict(sorted(counts.items())),
     }
 
@@ -382,7 +407,6 @@ def matches_evaluation_target(
     if not all(old.get(field) == item.get(field) for field in required_fields):
         return False
 
-    # Older reports may not contain this field.
     if "answerable" in old and old["answerable"] != item.get("answerable"):
         return False
 
@@ -550,8 +574,6 @@ def main() -> int:
     )
     target = len(run_questions)
 
-    # Start with prior records that still match the current golden set.
-    # Keep transient failures until a new attempt replaces them.
     records_by_id: dict[str, dict[str, Any]] = {}
 
     if resume:
@@ -567,8 +589,6 @@ def main() -> int:
             if saved is not None:
                 records_by_id[question_id] = saved
             else:
-                # Preserve matching transient/incomplete attempts unless a
-                # new attempt replaces them.
                 retained = make_record(item)
                 retained.update(old)
                 retained["id"] = question_id
@@ -604,10 +624,14 @@ def main() -> int:
                     "(reused saved result)"
                 )
                 current_records = ordered_records(records_by_id, questions)
+                current_interruptions = count_provider_interruptions(
+                    current_records
+                )
                 write_reports(
                     current_records,
                     total,
-                    len(current_records) == total,
+                    len(current_records) == total
+                    and current_interruptions == 0,
                 )
                 continue
 
@@ -664,40 +688,54 @@ def main() -> int:
             )
         )
 
-        # Always persist the merged records, not only this run's records.
         current_records = ordered_records(records_by_id, questions)
-        complete = len(current_records) == total and not provider_limit_hit
-        write_reports(current_records, total, complete)
+        current_interruptions = count_provider_interruptions(current_records)
+        complete_now = (
+            len(current_records) == total
+            and current_interruptions == 0
+        )
+        write_reports(current_records, total, complete_now)
 
         if provider_limit_hit:
             print("\nStopping evaluation after provider rate limit.")
             if record["failure_category"] == "daily_quota_exhausted":
                 print("Daily token quota exhaustion detected.")
-            print(f"{max(0, total - len(current_records))} question(s) pending.")
+            print(
+                f"{max(0, total - (len(current_records) - current_interruptions))} "
+                "question(s) pending."
+            )
             break
 
     records = ordered_records(records_by_id, questions)
+    attempted_count = len(records)
+    provider_interruptions = count_provider_interruptions(records)
+    completed_count = attempted_count - provider_interruptions
     passed_count = sum(1 for record in records if record["passed"])
+    failed_count = completed_count - passed_count
+
     failure_counts = Counter(
         record["failure_category"]
         for record in records
         if record["failure_category"] and not record["passed"]
     )
-    pending = max(0, total - len(records))
+
+    pending = max(0, total - completed_count)
     complete = pending == 0 and not provider_limit_hit
 
     write_reports(records, total, complete)
 
     print("-" * 68)
     print("EVALUATION SUMMARY")
-    print(f"Completed: {len(records)}/{total}")
-    print(f"Passed: {passed_count}/{len(records)} attempted")
-    print(f"Failed attempts: {len(records) - passed_count}")
+    print(f"Attempted requests: {attempted_count}")
+    print(f"Completed SQL evaluations: {completed_count}/{total}")
+    print(f"Passed: {passed_count}/{completed_count} completed")
+    print(f"Failed SQL evaluations: {failed_count}")
+    print(f"Provider interruptions: {provider_interruptions}")
     print(f"Pending: {pending}")
     print(f"Complete: {complete}")
     print(
-        "Pass rate (completed attempts): "
-        f"{(passed_count / len(records) * 100) if records else 0.0:.2f}%"
+        "Pass rate (completed SQL evaluations): "
+        f"{(passed_count / completed_count * 100) if completed_count else 0.0:.2f}%"
     )
     print("\nFailure taxonomy:")
 

@@ -1,3 +1,4 @@
+
 import json
 
 import evals.evaluate_agent as evaluator
@@ -127,10 +128,14 @@ def test_daily_quota_stops_run_and_leaves_questions_pending(
 
     assert exit_code == 1
     assert len(calls) == 2
-    assert report["completed"] == 2
-    assert report["pending"] == 3
-    assert report["complete"] is False
+    assert report["attempted"] == 2
+    assert report["completed"] == 1
     assert report["passed"] == 1
+    assert report["failed"] == 0
+    assert report["provider_interruptions"] == 1
+    assert report["pending"] == 4
+    assert report["complete"] is False
+    assert report["pass_rate_percent"] == 100.0
     assert report["failure_counts"]["daily_quota_exhausted"] == 1
 
 
@@ -156,10 +161,14 @@ def test_smoke_test_runs_only_three_questions(tmp_path, monkeypatch):
 
     assert exit_code == 0
     assert len(calls) == 3
+    assert report["attempted"] == 3
     assert report["completed"] == 3
     assert report["pending"] == 2
     assert report["complete"] is False
     assert report["passed"] == 3
+    assert report["failed"] == 0
+    assert report["provider_interruptions"] == 0
+    assert report["pass_rate_percent"] == 100.0
     assert "pass" not in report["failure_counts"]
 
 
@@ -271,11 +280,12 @@ def test_quota_stop_preserves_previously_saved_records(
     assert exit_code == 1
     assert len(calls) == 1
     assert calls[0] == "Test question 4"
-    assert report["completed"] == 4
-    assert report["pending"] == 1
+    assert report["attempted"] == 4
+    assert report["completed"] == 3
+    assert report["pending"] == 2
+    assert report["provider_interruptions"] == 1
     assert report["complete"] is False
 
-    # The three previously saved records must remain in the report.
     for item in questions[:3]:
         assert item["id"] in serialized_report
         assert item["question"] in serialized_report
@@ -288,8 +298,6 @@ def test_pending_only_reuses_saved_results(
 
     questions = [make_question(i) for i in range(1, 6)]
 
-    # Q001 was a successful result. Q002 was a deterministic failure.
-    # Both should be reused instead of triggering another model call.
     old_records = [
         saved_record(questions[0]),
         saved_record(
@@ -328,7 +336,48 @@ def test_pending_only_reuses_saved_results(
     assert report["completed"] == 5
     assert report["pending"] == 0
 
-    # Previously saved questions and their failure classification survive.
     assert "Q001" in serialized_report
     assert "Q002" in serialized_report
     assert "column_count_mismatch" in serialized_report
+
+
+def test_report_excludes_provider_interruptions_from_pass_rate(tmp_path, monkeypatch):
+    for name, path in {
+        "RESULTS_JSON_PATH": tmp_path / "results.json",
+        "RESULTS_CSV_PATH": tmp_path / "results.csv",
+        "FAILURE_TAXONOMY_PATH": tmp_path / "failure_taxonomy.json",
+    }.items():
+        monkeypatch.setattr(evaluator, name, path)
+
+    records = [
+        {
+            "id": "Q001",
+            "passed": True,
+            "failure_category": "pass",
+        },
+        {
+            "id": "Q002",
+            "passed": False,
+            "failure_category": "column_count_mismatch",
+        },
+        {
+            "id": "Q003",
+            "passed": False,
+            "failure_category": "daily_quota_exhausted",
+        },
+    ]
+
+    evaluator.write_reports(records, total=5, complete=False)
+
+    report = json.loads(
+        (tmp_path / "results.json").read_text(encoding="utf-8")
+    )
+
+    assert report["attempted"] == 3
+    assert report["completed"] == 2
+    assert report["passed"] == 1
+    assert report["failed"] == 1
+    assert report["provider_interruptions"] == 1
+    assert report["pending"] == 3
+    assert report["pass_rate_percent"] == 50.0
+    assert report["failure_counts"]["daily_quota_exhausted"] == 1
