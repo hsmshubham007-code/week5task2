@@ -123,6 +123,7 @@ def test_smoke_test_runs_only_three_questions(tmp_path, monkeypatch):
     assert report["pending"] == 2
     assert report["complete"] is False
     assert report["passed"] == 3
+    assert "pass" not in report["failure_counts"]
 
 
 def test_smoke_count_can_be_customized(tmp_path, monkeypatch):
@@ -156,3 +157,42 @@ def test_smoke_count_can_be_customized(tmp_path, monkeypatch):
     assert report["pending"] == 3
     assert report["complete"] is False
     assert report["passed"] == 2
+
+
+def test_saved_result_is_not_reused_for_different_question():
+    item = make_question(1)
+    old = {
+        "id": "Q001",
+        "question": "A different question",
+        "passed": True,
+        "failure_category": "pass",
+        "actual_columns": ["value"],
+        "actual_rows": [[1]],
+        "generated_sql": ["SELECT 1 AS value"],
+        "sql_errors": [],
+        "agent_answer": "Old answer",
+    }
+
+    # This test documents the desired behavior.
+    assert evaluator.rescore_saved_record(item, old) is None
+
+
+def test_saved_result_is_not_reused_when_expected_answer_changed():
+    item = make_question(1)
+    item["expected_rows"] = [[2]]
+
+    old = {
+        "id": "Q001",
+        "question": item["question"],
+        "passed": True,
+        "failure_category": "pass",
+        "expected_rows": [[1]],
+        "actual_columns": ["value"],
+        "actual_rows": [[1]],
+        "generated_sql": ["SELECT 1 AS value"],
+        "sql_errors": [],
+        "agent_answer": "Old answer",
+    }
+
+    # The saved result must not mask a changed evaluation target.
+    assert evaluator.rescore_saved_record(item, old) is None

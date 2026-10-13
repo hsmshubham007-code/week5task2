@@ -275,7 +275,7 @@ def write_reports(
     counts = Counter(
         record["failure_category"]
         for record in records
-        if record["failure_category"]
+        if not record["passed"] and record["failure_category"]
     )
     completed = len(records)
     summary = {
@@ -353,12 +353,24 @@ def rescore_saved_record(
     item: dict[str, Any],
     old: dict[str, Any],
 ) -> dict[str, Any] | None:
-    """Reuse saved result data without calling the LLM again."""
+    """Reuse saved results only when they match the current evaluation target."""
     if old.get("failure_category") in RETRY_CATEGORIES:
         return None
 
+    # Do not reuse a result from a different question or evaluation target.
+    for field in (
+        "id",
+        "question",
+        "answerable",
+        "expected_columns",
+        "expected_rows",
+    ):
+        if old.get(field) != item.get(field):
+            return None
+
     actual_rows = normalize_rows(old.get("actual_rows"))
     actual_columns = old.get("actual_columns")
+
     if actual_rows is None or not isinstance(actual_columns, list):
         return None
 
@@ -372,19 +384,25 @@ def rescore_saved_record(
         "exception": old.get("exception", ""),
         "reused_previous_result": True,
     })
+
     passed, category, columns, rows = classify_result(
-        result={"columns": actual_columns, "rows": actual_rows},
+        result={
+            "columns": actual_columns,
+            "rows": actual_rows,
+        },
         expected_columns=item.get("expected_columns", []),
         expected_rows=item.get("expected_rows", []),
         sql_queries=record["generated_sql"],
         errors=record["sql_errors"],
     )
+
     record.update({
         "passed": passed,
         "failure_category": category,
         "actual_columns": columns,
         "actual_rows": rows,
     })
+
     return record
 
 
