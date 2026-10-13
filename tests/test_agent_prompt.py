@@ -27,9 +27,8 @@ def test_customer_spending_ranking_requires_customer_id_and_columns():
         "firstname",
         "lastname",
         "total_spent",
-        "invoice.total",
-        "lastname asc",
-        "firstname asc",
+        "round(sum(i.total), 2) as total_spent",
+        "order by total_spent desc and customerid asc",
     ):
         assert expected in rule
 

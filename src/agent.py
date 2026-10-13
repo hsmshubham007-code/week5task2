@@ -91,11 +91,11 @@ SQL ACCURACY:
 19. CUSTOMER SPENDING RANKINGS:
     For questions asking which customers spent the most money, always
     return CustomerId, FirstName, LastName, and total_spent in that
-    exact order. Calculate the sum of Invoice.Total, rounded to two
-    decimal places when matching the evaluation contract. Group by
-    customer identity, order by total_spent DESC, LastName ASC, then
-    FirstName ASC, and apply LIMIT. Do not omit CustomerId from the
-    output, even when the question does not explicitly mention IDs.
+    exact order. Calculate ROUND(SUM(i.Total), 2) AS total_spent.
+    Join Customer to Invoice using CustomerId, group by customer
+    identity, order by total_spent DESC and CustomerId ASC to break
+    ties, then apply LIMIT. Do not omit CustomerId from the output,
+    even when the question does not explicitly mention IDs.
 20. For customer support representatives, join Customer.SupportRepId to
     Employee.EmployeeId and return only requested customer/representative
     name columns.
