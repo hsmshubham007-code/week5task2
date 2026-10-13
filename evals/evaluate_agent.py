@@ -1,8 +1,8 @@
-
 """Evaluate the SQL agent against the pre-created golden set.
 
 Scores actual SQL result data, not generated SQL text.
-Supports resumable evaluations, smoke tests, and provider-limit safeguards.
+Supports resumable evaluations, pending-only runs, smoke tests,
+and provider-limit safeguards.
 """
 from __future__ import annotations
 
@@ -42,7 +42,7 @@ RETRY_CATEGORIES = {
 
 
 def normalize_columns(columns: Any) -> list[str]:
-    """Normalize labels for reporting; aliases do not affect scoring."""
+    """Normalize column labels for reporting."""
     if not isinstance(columns, list):
         return []
     return [str(column).strip().lower() for column in columns]
@@ -52,11 +52,13 @@ def normalize_rows(rows: Any) -> list[list[Any]] | None:
     """Validate and normalize returned rows."""
     if not isinstance(rows, list):
         return None
+
     normalized = []
     for row in rows:
         if not isinstance(row, (list, tuple)):
             return None
         normalized.append(list(row))
+
     return normalized
 
 
@@ -83,6 +85,7 @@ def parse_tool_output(output: Any) -> dict[str, Any] | None:
                 return parsed
         except json.JSONDecodeError:
             pass
+
     return None
 
 
@@ -126,6 +129,7 @@ def extract_sql_results(
 
     sql_results = []
     errors = []
+
     for log in tool_logs:
         if not isinstance(log, dict):
             continue
@@ -134,6 +138,7 @@ def extract_sql_results(
 
         output = log.get("output", "")
         parsed = parse_tool_output(output)
+
         if parsed is None:
             errors.append(str(output)[:500])
         elif parsed.get("error"):
@@ -152,7 +157,7 @@ def rows_match_with_ties(
     expected_rows: list[list[Any]],
     actual_rows: list[list[Any]],
 ) -> bool:
-    """Compare rows strictly, allowing 0.01 numeric tolerance and tied ranking order."""
+    """Compare rows with numeric tolerance and tied-ranking order support."""
     import math
 
     if len(expected_rows) != len(actual_rows):
@@ -191,6 +196,7 @@ def rows_match_with_ties(
 
     expected_keys = [row[-1] for row in expected_rows]
     actual_keys = [row[-1] for row in actual_rows]
+
     if not all(is_number(value) for value in expected_keys + actual_keys):
         return False
 
@@ -230,7 +236,9 @@ def rows_match_with_ties(
             if match_index is None:
                 return False
             unmatched.pop(match_index)
+
         start = end
+
     return True
 
 
@@ -251,16 +259,20 @@ def classify_result(
 
     actual_columns = normalize_columns(result.get("columns"))
     actual_rows = normalize_rows(result.get("rows"))
+
     if actual_rows is None:
         return False, "malformed_sql_result", actual_columns, None
 
     expected_normalized = normalize_columns(expected_columns)
     if len(actual_columns) != len(expected_normalized):
         return False, "column_count_mismatch", actual_columns, actual_rows
+
     if any(len(row) != len(expected_normalized) for row in actual_rows):
         return False, "malformed_sql_result", actual_columns, actual_rows
+
     if not rows_match_with_ties(expected_rows, actual_rows):
         return False, "row_mismatch", actual_columns, actual_rows
+
     return True, "pass", actual_columns, actual_rows
 
 
@@ -269,7 +281,7 @@ def write_reports(
     total: int,
     complete: bool,
 ) -> None:
-    """Persist current progress, including pending questions."""
+    """Persist merged progress, including pending questions."""
     passed = sum(1 for record in records if record["passed"])
     failed = len(records) - passed
     counts = Counter(
@@ -278,6 +290,7 @@ def write_reports(
         if not record["passed"] and record["failure_category"]
     )
     completed = len(records)
+
     summary = {
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
         "golden_set": "evals/golden_set.json",
@@ -306,9 +319,11 @@ def write_reports(
         "actual_rows", "generated_sql", "sql_errors", "agent_answer",
         "exception", "reused_previous_result",
     ]
+
     with RESULTS_CSV_PATH.open("w", encoding="utf-8-sig", newline="") as file:
         writer = csv.DictWriter(file, fieldnames=fields, extrasaction="ignore")
         writer.writeheader()
+
         for record in records:
             row = dict(record)
             for field in (
@@ -327,14 +342,17 @@ def write_reports(
         "failed": failed,
         "failure_counts": dict(sorted(counts.items())),
     }
+
     with FAILURE_TAXONOMY_PATH.open("w", encoding="utf-8") as file:
         json.dump(taxonomy, file, indent=2, ensure_ascii=False)
 
 
 def make_record(item: dict[str, Any]) -> dict[str, Any]:
+    """Create a consistently shaped evaluation record."""
     return {
         "id": str(item.get("id", "")),
         "question": str(item.get("question", "")),
+        "answerable": item.get("answerable"),
         "passed": False,
         "failure_category": "",
         "expected_columns": item.get("expected_columns", []),
@@ -349,24 +367,38 @@ def make_record(item: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def matches_evaluation_target(
+    item: dict[str, Any],
+    old: dict[str, Any],
+) -> bool:
+    """Check whether a saved record matches the current evaluation target."""
+    required_fields = (
+        "id",
+        "question",
+        "expected_columns",
+        "expected_rows",
+    )
+
+    if not all(old.get(field) == item.get(field) for field in required_fields):
+        return False
+
+    # Older reports may not contain this field.
+    if "answerable" in old and old["answerable"] != item.get("answerable"):
+        return False
+
+    return True
+
+
 def rescore_saved_record(
     item: dict[str, Any],
     old: dict[str, Any],
 ) -> dict[str, Any] | None:
-    """Reuse saved results only when they match the current evaluation target."""
+    """Reuse saved results only when the result and target are reusable."""
     if old.get("failure_category") in RETRY_CATEGORIES:
         return None
 
-    # Do not reuse a result from a different question or evaluation target.
-    for field in (
-        "id",
-        "question",
-        "answerable",
-        "expected_columns",
-        "expected_rows",
-    ):
-        if old.get(field) != item.get(field):
-            return None
+    if not matches_evaluation_target(item, old):
+        return None
 
     actual_rows = normalize_rows(old.get("actual_rows"))
     actual_columns = old.get("actual_columns")
@@ -386,10 +418,7 @@ def rescore_saved_record(
     })
 
     passed, category, columns, rows = classify_result(
-        result={
-            "columns": actual_columns,
-            "rows": actual_rows,
-        },
+        result={"columns": actual_columns, "rows": actual_rows},
         expected_columns=item.get("expected_columns", []),
         expected_rows=item.get("expected_rows", []),
         sql_queries=record["generated_sql"],
@@ -406,6 +435,46 @@ def rescore_saved_record(
     return record
 
 
+def load_previous_records() -> dict[str, dict[str, Any]]:
+    """Load prior records without failing if a report is unreadable."""
+    if not RESULTS_JSON_PATH.exists():
+        return {}
+
+    try:
+        with RESULTS_JSON_PATH.open("r", encoding="utf-8") as file:
+            previous = json.load(file)
+
+        if not isinstance(previous, dict):
+            return {}
+
+        return {
+            str(record.get("id")): record
+            for record in previous.get("results", [])
+            if isinstance(record, dict) and record.get("id") is not None
+        }
+    except (json.JSONDecodeError, OSError, AttributeError, TypeError):
+        print("WARNING: Previous results could not be loaded.")
+        return {}
+
+
+def ordered_records(
+    records_by_id: dict[str, dict[str, Any]],
+    questions: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Return available records in golden-set order, without duplicates."""
+    result = []
+    seen = set()
+
+    for index, item in enumerate(questions, start=1):
+        question_id = str(item.get("id", f"Q{index:03d}"))
+        record = records_by_id.get(question_id)
+        if record is not None and question_id not in seen:
+            result.append(record)
+            seen.add(question_id)
+
+    return result
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="Evaluate the SQL agent against the golden set."
@@ -413,7 +482,15 @@ def main() -> int:
     parser.add_argument(
         "--resume",
         action="store_true",
-        help="Reuse saved results where possible; retry incomplete attempts.",
+        help="Reuse valid saved results and retry transient failures.",
+    )
+    parser.add_argument(
+        "--pending-only",
+        action="store_true",
+        help=(
+            "Reuse saved results and process only missing results or "
+            "retryable transient failures. Implies --resume."
+        ),
     )
     parser.add_argument(
         "--smoke-test",
@@ -431,12 +508,19 @@ def main() -> int:
     if args.smoke_count < 1:
         parser.error("--smoke-count must be at least 1")
 
+    resume = args.resume or args.pending_only
+
     if not GOLDEN_SET_PATH.exists():
         print(f"ERROR: Golden set not found: {GOLDEN_SET_PATH}")
         return 1
 
-    with GOLDEN_SET_PATH.open("r", encoding="utf-8") as file:
-        golden_set = json.load(file)
+    try:
+        with GOLDEN_SET_PATH.open("r", encoding="utf-8") as file:
+            golden_set = json.load(file)
+    except (json.JSONDecodeError, OSError) as exc:
+        print(f"ERROR: Could not load golden set: {exc}")
+        return 1
+
     if not isinstance(golden_set, list):
         print("ERROR: Golden set must contain a JSON list.")
         return 1
@@ -452,22 +536,12 @@ def main() -> int:
     if RESULTS_JSON_PATH.exists() and not BASELINE_JSON_PATH.exists():
         shutil.copy2(RESULTS_JSON_PATH, BASELINE_JSON_PATH)
         print("Preserved original results at evals/results_baseline.json")
+
     if RESULTS_CSV_PATH.exists() and not BASELINE_CSV_PATH.exists():
         shutil.copy2(RESULTS_CSV_PATH, BASELINE_CSV_PATH)
         print("Preserved original CSV at evals/results_baseline.csv")
 
-    old_records: dict[str, dict[str, Any]] = {}
-    if args.resume and RESULTS_JSON_PATH.exists():
-        try:
-            with RESULTS_JSON_PATH.open("r", encoding="utf-8") as file:
-                previous = json.load(file)
-            old_records = {
-                str(record.get("id")): record
-                for record in previous.get("results", [])
-                if isinstance(record, dict)
-            }
-        except (json.JSONDecodeError, OSError, AttributeError):
-            print("WARNING: Previous results could not be loaded; starting fresh.")
+    old_records = load_previous_records() if resume else {}
 
     total = len(questions)
     run_questions = (
@@ -476,6 +550,31 @@ def main() -> int:
     )
     target = len(run_questions)
 
+    # Start with prior records that still match the current golden set.
+    # Keep transient failures until a new attempt replaces them.
+    records_by_id: dict[str, dict[str, Any]] = {}
+
+    if resume:
+        for index, original_item in enumerate(questions, start=1):
+            question_id = str(original_item.get("id", f"Q{index:03d}"))
+            item = {**original_item, "id": question_id}
+            old = old_records.get(question_id)
+
+            if not old or not matches_evaluation_target(item, old):
+                continue
+
+            saved = rescore_saved_record(item, old)
+            if saved is not None:
+                records_by_id[question_id] = saved
+            else:
+                # Preserve matching transient/incomplete attempts unless a
+                # new attempt replaces them.
+                retained = make_record(item)
+                retained.update(old)
+                retained["id"] = question_id
+                retained["reused_previous_result"] = False
+                records_by_id[question_id] = retained
+
     print("=" * 68)
     print("SQL AGENT EVALUATION")
     print("=" * 68)
@@ -483,11 +582,11 @@ def main() -> int:
     print(f"Answerable questions: {total}")
     print(f"Questions in this run: {target}")
     print("Scoring: returned row data, not generated SQL text")
-    print(f"Resume mode: {args.resume}")
+    print(f"Resume mode: {resume}")
+    print(f"Pending-only mode: {args.pending_only}")
     print(f"Smoke test: {args.smoke_test}")
     print("-" * 68)
 
-    records: list[dict[str, Any]] = []
     provider_limit_hit = False
 
     for index, original_item in enumerate(run_questions, start=1):
@@ -495,30 +594,37 @@ def main() -> int:
         item = {**original_item, "id": question_id}
         old = old_records.get(question_id)
 
-        if args.resume and old:
+        if resume and old:
             saved = rescore_saved_record(item, old)
             if saved is not None:
-                records.append(saved)
-                status = "PASS" if saved["passed"] else "FAIL"
+                records_by_id[question_id] = saved
                 print(
-                    f"[{index:02d}/{target:02d}] {question_id} {status} "
+                    f"[{index:02d}/{target:02d}] {question_id} "
+                    f"{'PASS' if saved['passed'] else 'FAIL'} "
                     "(reused saved result)"
                 )
-                complete = target == total and index == target
-                write_reports(records, total, complete)
+                current_records = ordered_records(records_by_id, questions)
+                write_reports(
+                    current_records,
+                    total,
+                    len(current_records) == total,
+                )
                 continue
 
         record = make_record(item)
+
         try:
             agent_result = ask_agent(str(item.get("question", "")))
             sql_queries = agent_result.get("generated_sql", [])
             if not isinstance(sql_queries, list):
                 sql_queries = []
+
             record["generated_sql"] = sql_queries
             record["agent_answer"] = str(agent_result.get("answer", ""))
 
             sql_result, errors = extract_sql_results(agent_result)
             record["sql_errors"] = errors
+
             passed, category, columns, rows = classify_result(
                 result=sql_result,
                 expected_columns=item.get("expected_columns", []),
@@ -526,15 +632,18 @@ def main() -> int:
                 sql_queries=sql_queries,
                 errors=errors,
             )
+
             record.update({
                 "passed": passed,
                 "failure_category": category,
                 "actual_columns": columns,
                 "actual_rows": rows,
             })
+
         except Exception as exc:
             error_text = f"{type(exc).__name__}: {exc}"
             record["exception"] = error_text
+
             if is_daily_quota_error(error_text):
                 record["failure_category"] = "daily_quota_exhausted"
                 provider_limit_hit = True
@@ -544,28 +653,30 @@ def main() -> int:
             else:
                 record["failure_category"] = "agent_exception"
 
-        records.append(record)
-        status = "PASS" if record["passed"] else "FAIL"
+        records_by_id[question_id] = record
+
         print(
-            f"[{index:02d}/{target:02d}] {question_id} {status}"
+            f"[{index:02d}/{target:02d}] {question_id} "
+            f"{'PASS' if record['passed'] else 'FAIL'}"
             + (
                 f" ({record['failure_category']})"
                 if not record["passed"] else ""
             )
         )
 
-        # Save progress after every question. Never count unattempted questions
-        # as failures, and never continue calling the provider after a limit.
-        complete = target == total and index == target and not provider_limit_hit
-        write_reports(records, total, complete)
+        # Always persist the merged records, not only this run's records.
+        current_records = ordered_records(records_by_id, questions)
+        complete = len(current_records) == total and not provider_limit_hit
+        write_reports(current_records, total, complete)
 
         if provider_limit_hit:
             print("\nStopping evaluation after provider rate limit.")
             if record["failure_category"] == "daily_quota_exhausted":
                 print("Daily token quota exhaustion detected.")
-            print(f"{total - len(records)} question(s) remain pending.")
+            print(f"{max(0, total - len(current_records))} question(s) pending.")
             break
 
+    records = ordered_records(records_by_id, questions)
     passed_count = sum(1 for record in records if record["passed"])
     failure_counts = Counter(
         record["failure_category"]
@@ -574,6 +685,8 @@ def main() -> int:
     )
     pending = max(0, total - len(records))
     complete = pending == 0 and not provider_limit_hit
+
+    write_reports(records, total, complete)
 
     print("-" * 68)
     print("EVALUATION SUMMARY")
@@ -587,6 +700,7 @@ def main() -> int:
         f"{(passed_count / len(records) * 100) if records else 0.0:.2f}%"
     )
     print("\nFailure taxonomy:")
+
     if failure_counts:
         for category, count in sorted(failure_counts.items()):
             print(f"  {category}: {count}")
@@ -603,11 +717,10 @@ def main() -> int:
             "\nNOTE: Provider rate limits are infrastructure interruptions, "
             "not evidence of incorrect SQL."
         )
+
     if args.smoke_test and not provider_limit_hit:
         print("\nSmoke test only; run the full evaluation after it passes.")
 
-    # A successful smoke test may exit successfully even though the full
-    # golden set remains pending. A full run requires all questions to pass.
     if provider_limit_hit:
         return 1
     if any(not record["passed"] for record in records):
