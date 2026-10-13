@@ -55,10 +55,7 @@ def test_q011_customer_spending_ranking():
         FROM Customer AS c
         JOIN Invoice AS i ON i.CustomerId = c.CustomerId
         GROUP BY c.CustomerId, c.FirstName, c.LastName
-        ORDER BY
-            total_spent DESC,
-            c.LastName ASC,
-            c.FirstName ASC
+        ORDER BY total_spent DESC, c.CustomerId ASC
         LIMIT 5
     """
 
